@@ -31,6 +31,8 @@ apple_vy = -20
 
 gravity = 0.5
 
+apple_radius = 40
+
 def overlay_png(background, overlay, x, y):
 
     h, w = overlay.shape[:2]
@@ -114,6 +116,29 @@ while True:
 
             if len(trail_points) > 20:
                 trail_points.pop(0)
+
+    for point in trail_points:
+
+        trail_x, trail_y = point
+
+        distance = (
+            (trail_x - (apple_x + 40)) ** 2
+            +
+            (trail_y - (apple_y + 40)) ** 2
+        ) ** 0.5
+
+        if distance < apple_radius:
+
+            apple_x = random.randint(
+                50,
+                frame.shape[1] - 100
+            )
+
+            apple_y = frame.shape[0]
+
+            apple_vx = random.randint(-8, 8)
+
+            apple_vy = random.randint(-28, -16)
                 
     # Draw trail
     for i in range(1, len(trail_points)):
