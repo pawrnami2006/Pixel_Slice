@@ -10,6 +10,7 @@ hands = mp_hands.Hands(
 )
 
 mp_draw = mp.solutions.drawing_utils
+trail_points = []
 
 # Open webcam
 cap = cv2.VideoCapture(0)
@@ -50,6 +51,15 @@ while True:
 
             # Draw green circle on fingertip
             cv2.circle(frame, (x, y), 15, (0, 255, 0), -1)
+
+            trail_points.append((x, y))
+
+            if len(trail_points) > 20:
+                trail_points.pop(0)
+                
+    # Draw trail
+    for i in range(1, len(trail_points)):
+        cv2.line(frame, trail_points[i-1], trail_points[i], (255, 255, 255), 5)
 
     cv2.imshow("Pixel Slice", frame)
 
