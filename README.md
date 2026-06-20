@@ -22,7 +22,7 @@ A hand gesture controlled Fruit Ninja inspired game built using OpenCV, MediaPip
 
 ✅ Hand tracking completed
 
-✅ Fruit spawning in progress
+✅ Fruit spawning completed
 
 🚧 Slicing mechanics in progress
 
