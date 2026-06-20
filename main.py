@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import random
+import time
 
 # Initialize MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -32,6 +33,8 @@ apple_vy = -20
 gravity = 0.5
 
 apple_radius = 40
+
+last_hit_time = 0
 
 def overlay_png(background, overlay, x, y):
 
@@ -69,6 +72,18 @@ while True:
 
     apple_x += apple_vx
     apple_y += apple_vy
+
+    # Bounce from left wall
+    if apple_x <= 0:
+        apple_vx *= -1
+
+    # Bounce from right wall
+    if apple_x >= frame.shape[1] - 80:
+        apple_vx *= -1
+
+    # Bounce from top
+    if apple_y <= 0:
+        apple_vy = abs(apple_vy)
 
     # Respawn apple
     if apple_y > frame.shape[0]:
@@ -127,7 +142,9 @@ while True:
             (trail_y - (apple_y + 40)) ** 2
         ) ** 0.5
 
-        if distance < apple_radius:
+        if distance < apple_radius and time.time() - last_hit_time > 0.3:
+
+            last_hit_time = time.time()
 
             apple_x = random.randint(
                 50,
