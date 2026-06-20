@@ -71,13 +71,16 @@ while True:
     # Respawn apple
     if apple_y > frame.shape[0]:
 
-        apple_x = random.randint(100, 500)
+        apple_x = random.randint(
+            50,
+            frame.shape[1] - 100
+        )
 
         apple_y = frame.shape[0]
 
-        apple_vx = random.choice([-4, -3, 3, 4])
+        apple_vx = random.randint(-8, 8)
 
-        apple_vy = random.randint(-22, -18)
+        apple_vy = random.randint(-28, -16)
 
     # Convert BGR to RGB
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
