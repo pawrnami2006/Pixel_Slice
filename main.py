@@ -17,15 +17,41 @@ trail_points = []
 # Open webcam
 cap = cv2.VideoCapture(0)
 
+success, frame = cap.read()
+
+screen_height = frame.shape[0]
+
 apple_img = cv2.imread(
     "assets/apple.png",
     cv2.IMREAD_UNCHANGED
 )
 
+game_over_img = cv2.imread(
+    "assets/game_over.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+heart_img = cv2.imread(
+    "assets/heart.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+print("Heart shape:", heart_img.shape)
+
+heart_img = cv2.resize(
+    heart_img,
+    (60, 60)
+)
+
+game_over_img = cv2.resize(
+    game_over_img,
+    (500, 250)
+)
+
 apple_img = cv2.resize(apple_img, (80, 80))
 
 apple_x = 300
-apple_y = 700
+apple_y = screen_height - 100
 
 apple_vx = 3
 apple_vy = -20
@@ -33,6 +59,9 @@ apple_vy = -20
 gravity = 0.5
 
 apple_radius = 40
+
+score = 0
+lives = 3
 
 last_hit_time = 0
 
@@ -62,8 +91,47 @@ def overlay_png(background, overlay, x, y):
 while True:
     success, frame = cap.read()
 
+    print("Frame Height:", frame.shape[0])
+    print("Lives:", lives)
+
     if not success:
         break
+
+    if lives <= 0:
+
+        while True:
+
+            success, frame = cap.read()
+
+            if not success:
+                break
+
+            frame = cv2.flip(frame, 1)
+
+            overlay_png(
+                frame,
+                game_over_img,
+                70,
+                100
+            )
+
+            cv2.putText(
+                frame,
+                f"Final Score: {score}",
+                (180, 400),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 255, 255),
+                2
+            )
+
+            cv2.imshow("Pixel Slice", frame)
+
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+
+        break
+
 
     # Mirror effect
     frame = cv2.flip(frame, 1)
@@ -87,6 +155,8 @@ while True:
 
     # Respawn apple
     if apple_y > frame.shape[0]:
+
+        lives -= 1
 
         apple_x = random.randint(
             50,
@@ -146,6 +216,8 @@ while True:
 
             last_hit_time = time.time()
 
+            score += 1
+
             apple_x = random.randint(
                 50,
                 frame.shape[1] - 100
@@ -159,13 +231,51 @@ while True:
                 
     # Draw trail
     for i in range(1, len(trail_points)):
-        cv2.line(frame, trail_points[i-1], trail_points[i], (255, 255, 255), 5)
+        cv2.line(
+            frame,
+            trail_points[i-1],
+            trail_points[i],
+            (255, 255, 255),
+            5
+        )
+
+    # Draw apple
+    overlay_png(
+        frame,
+        apple_img,
+        int(apple_x),
+        int(apple_y)
+    )
+
+    # Draw score
+    cv2.putText(
+        frame,
+        f"Score: {score}",
+        (20, 50),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1,
+        (255, 255, 255),
+        2
+    )
+
+    cv2.putText(
+        frame,
+        f"Lives Value: {lives}",
+        (20, 150),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.7,
+        (255, 255, 255),
+        2
+    )
+
+    # Draw lives
+    for i in range(lives):
 
         overlay_png(
             frame,
-            apple_img,
-            int(apple_x),
-            int(apple_y)
+            heart_img,
+            20 + (i * 70),
+            70
         )
 
     cv2.imshow("Pixel Slice", frame)
