@@ -96,6 +96,15 @@ apple_radius = 40
 score = 0
 lives = 3
 
+with open("highscore.txt", "r") as file:
+
+    data = file.read().strip()
+
+    if data == "":
+        high_score = 0
+    else:
+        high_score = int(data)
+
 game_started = False
 
 current_fruit = random.choice(fruit_images)
@@ -296,6 +305,13 @@ while True:
 
             score += 1
 
+            if score > high_score:
+
+                high_score = score
+
+                with open("highscore.txt", "w") as file:
+                    file.write(str(high_score))
+
             apple_x = random.randint(
                 50,
                 frame.shape[1] - 100
@@ -338,6 +354,16 @@ while True:
         2
     )
 
+    cv2.putText(
+        frame,
+        f"High Score: {high_score}",
+        (20, 100),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (255, 255, 255),
+        2
+    )
+
     # Draw lives
     for i in range(lives):
 
@@ -345,7 +371,7 @@ while True:
             frame,
             heart_img,
             20 + (i * 70),
-            70
+            120
         )
 
     cv2.imshow("Pixel Slice", frame)
