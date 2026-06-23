@@ -46,12 +46,15 @@ game_over_img = cv2.imread(
     cv2.IMREAD_UNCHANGED
 )
 
+title_img = cv2.imread(
+    "assets/title.png",
+    cv2.IMREAD_UNCHANGED
+)
+
 heart_img = cv2.imread(
     "assets/heart.png",
     cv2.IMREAD_UNCHANGED
 )
-
-print("Heart shape:", heart_img.shape)
 
 heart_img = cv2.resize(
     heart_img,
@@ -60,6 +63,11 @@ heart_img = cv2.resize(
 
 game_over_img = cv2.resize(
     game_over_img,
+    (500, 250)
+)
+
+title_img = cv2.resize(
+    title_img,
     (500, 250)
 )
 
@@ -87,6 +95,8 @@ apple_radius = 40
 
 score = 0
 lives = 3
+
+game_started = False
 
 current_fruit = random.choice(fruit_images)
 
@@ -121,6 +131,36 @@ while True:
     if not success:
         break
 
+    if not game_started:
+
+        frame = cv2.flip(frame, 1)
+
+        overlay_png(
+            frame,
+            title_img,
+            70,
+            100
+        )
+
+        cv2.putText(
+            frame,
+            "Press SPACE to Start",
+            (140, 420),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (255, 255, 255),
+            2
+        )
+
+        cv2.imshow("Pixel Slice", frame)
+
+        key = cv2.waitKey(1)
+
+        if key == 32:
+            game_started = True
+
+        continue
+
     if lives <= 0:
 
         while True:
@@ -149,9 +189,21 @@ while True:
                 2
             )
 
+            cv2.putText(
+                frame,
+                "Press ESC to Quit",
+                (150, 450),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (255, 255, 255),
+                2
+            )
+
             cv2.imshow("Pixel Slice", frame)
 
-            if cv2.waitKey(1) & 0xFF == 27:
+            key = cv2.waitKey(1) & 0xFF
+
+            if key == 27:
                 break
 
         break
@@ -286,16 +338,6 @@ while True:
         2
     )
 
-    cv2.putText(
-        frame,
-        f"Lives Value: {lives}",
-        (20, 150),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.7,
-        (255, 255, 255),
-        2
-    )
-
     # Draw lives
     for i in range(lives):
 
@@ -309,7 +351,9 @@ while True:
     cv2.imshow("Pixel Slice", frame)
 
     # Press ESC to quit
-    if cv2.waitKey(1) & 0xFF == 27:
+    key = cv2.waitKey(1) & 0xFF
+
+    if key == 27:
         break
 
 cap.release()
