@@ -26,6 +26,21 @@ apple_img = cv2.imread(
     cv2.IMREAD_UNCHANGED
 )
 
+orange_img = cv2.imread(
+    "assets/orange.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+strawberry_img = cv2.imread(
+    "assets/strawberry.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+watermelon_img = cv2.imread(
+    "assets/watermelon.png",
+    cv2.IMREAD_UNCHANGED
+)
+
 game_over_img = cv2.imread(
     "assets/game_over.png",
     cv2.IMREAD_UNCHANGED
@@ -49,6 +64,16 @@ game_over_img = cv2.resize(
 )
 
 apple_img = cv2.resize(apple_img, (80, 80))
+orange_img = cv2.resize(orange_img, (80, 80))
+strawberry_img = cv2.resize(strawberry_img, (80, 80))
+watermelon_img = cv2.resize(watermelon_img, (80, 80))
+
+fruit_images = [
+    apple_img,
+    orange_img,
+    strawberry_img,
+    watermelon_img
+]
 
 apple_x = 300
 apple_y = screen_height - 100
@@ -62,6 +87,8 @@ apple_radius = 40
 
 score = 0
 lives = 3
+
+current_fruit = random.choice(fruit_images)
 
 last_hit_time = 0
 
@@ -90,9 +117,6 @@ def overlay_png(background, overlay, x, y):
 
 while True:
     success, frame = cap.read()
-
-    print("Frame Height:", frame.shape[0])
-    print("Lives:", lives)
 
     if not success:
         break
@@ -169,6 +193,8 @@ while True:
 
         apple_vy = random.randint(-28, -16)
 
+        current_fruit = random.choice(fruit_images)
+
     # Convert BGR to RGB
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -228,6 +254,8 @@ while True:
             apple_vx = random.randint(-8, 8)
 
             apple_vy = random.randint(-28, -16)
+
+            current_fruit = random.choice(fruit_images)
                 
     # Draw trail
     for i in range(1, len(trail_points)):
@@ -242,7 +270,7 @@ while True:
     # Draw apple
     overlay_png(
         frame,
-        apple_img,
+        current_fruit,
         int(apple_x),
         int(apple_y)
     )
