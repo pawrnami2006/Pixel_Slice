@@ -24,7 +24,7 @@ A hand gesture controlled Fruit Ninja inspired game built using OpenCV, MediaPip
 
 ✅ Fruit spawning completed
 
-🚧 Slicing mechanics in progress
+✅ Slicing mechanics in progress
 
 ## Assets
 

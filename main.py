@@ -44,6 +44,46 @@ watermelon_img = cv2.imread(
     cv2.IMREAD_UNCHANGED
 )
 
+apple_left_img = cv2.imread(
+    "assets/apple_left.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+apple_right_img = cv2.imread(
+    "assets/apple_right.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+orange_left_img = cv2.imread(
+    "assets/orange_left.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+orange_right_img = cv2.imread(
+    "assets/orange_right.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+strawberry_left_img = cv2.imread(
+    "assets/strawberry_left.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+strawberry_right_img = cv2.imread(
+    "assets/strawberry_right.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+watermelon_left_img = cv2.imread(
+    "assets/watermelon_left.png",
+    cv2.IMREAD_UNCHANGED
+)
+
+watermelon_right_img = cv2.imread(
+    "assets/watermelon_right.png",
+    cv2.IMREAD_UNCHANGED
+)
+
 game_over_img = cv2.imread(
     "assets/game_over.png",
     cv2.IMREAD_UNCHANGED
@@ -82,6 +122,18 @@ orange_img = cv2.resize(orange_img, (80, 80))
 strawberry_img = cv2.resize(strawberry_img, (80, 80))
 watermelon_img = cv2.resize(watermelon_img, (80, 80))
 
+apple_left_img = cv2.resize(apple_left_img, (50, 80))
+apple_right_img = cv2.resize(apple_right_img, (50, 80))
+
+orange_left_img = cv2.resize(orange_left_img, (50, 80))
+orange_right_img = cv2.resize(orange_right_img, (50, 80))
+
+strawberry_left_img = cv2.resize(strawberry_left_img, (50, 80))
+strawberry_right_img = cv2.resize(strawberry_right_img, (50, 80))
+
+watermelon_left_img = cv2.resize(watermelon_left_img, (50, 80))
+watermelon_right_img = cv2.resize(watermelon_right_img, (50, 80))
+
 fruit_images = [
     apple_img,
     orange_img,
@@ -99,8 +151,11 @@ gravity = 0.5
 
 apple_radius = 40
 
+SLICE_DURATION = 10
+
 score = 0
 lives = 3
+
 
 with open("highscore.txt", "r") as file:
 
@@ -116,6 +171,25 @@ game_started = False
 current_fruit = random.choice(fruit_images)
 
 last_hit_time = 0
+
+show_slice = False
+
+left_slice = None
+right_slice = None
+
+left_slice_x = 0
+left_slice_y = 0
+
+right_slice_x = 0
+right_slice_y = 0
+
+slice_timer = 0
+
+left_slice_vx = 0
+right_slice_vx = 0
+
+left_slice_vy = 0
+right_slice_vy = 0
 
 def overlay_png(background, overlay, x, y):
 
@@ -313,6 +387,38 @@ while True:
 
             slice_sound.play()   # 🔊 Play slice sound
 
+            show_slice = True
+
+            left_slice_x = apple_x
+            left_slice_y = apple_y
+
+            right_slice_x = apple_x
+            right_slice_y = apple_y
+
+            slice_timer = SLICE_DURATION
+
+            left_slice_vx = -2.0
+            left_slice_vy = -2.5
+
+            right_slice_vx = 3.2
+            right_slice_vy = -1.6
+
+            if current_fruit is apple_img:
+                left_slice = apple_left_img
+                right_slice = apple_right_img
+
+            elif current_fruit is orange_img:
+                left_slice = orange_left_img
+                right_slice = orange_right_img
+
+            elif current_fruit is strawberry_img:
+                left_slice = strawberry_left_img
+                right_slice = strawberry_right_img
+
+            elif current_fruit is watermelon_img:
+                left_slice = watermelon_left_img
+                right_slice = watermelon_right_img
+
             score += 1
 
             if score > high_score:
@@ -352,6 +458,36 @@ while True:
         int(apple_x),
         int(apple_y)
     )
+
+    if show_slice:
+
+        left_slice_vy += 0.7
+        right_slice_vy += 0.7
+
+        left_slice_x += left_slice_vx
+        left_slice_y += left_slice_vy
+
+        right_slice_x += right_slice_vx
+        right_slice_y += right_slice_vy
+
+        overlay_png(
+            frame,
+            left_slice,
+            int(left_slice_x),
+            int(left_slice_y)
+        )
+
+        overlay_png(
+            frame,
+            right_slice,
+            int(right_slice_x),
+            int(right_slice_y)
+        )
+
+        slice_timer -= 1
+
+        if slice_timer <= 0:
+            show_slice = False
 
     # Draw score
     cv2.putText(
