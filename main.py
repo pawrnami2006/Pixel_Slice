@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import random
 import time
+import pygame
 
 # Initialize MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -18,6 +19,8 @@ trail_points = []
 cap = cv2.VideoCapture(0)
 
 success, frame = cap.read()
+
+pygame.mixer.init()
 
 screen_height = frame.shape[0]
 
@@ -55,6 +58,9 @@ heart_img = cv2.imread(
     "assets/heart.png",
     cv2.IMREAD_UNCHANGED
 )
+
+slice_sound = pygame.mixer.Sound("assets/slice.mp3")
+game_over_sound = pygame.mixer.Sound("assets/game_over.mp3")
 
 heart_img = cv2.resize(
     heart_img,
@@ -171,6 +177,8 @@ while True:
         continue
 
     if lives <= 0:
+
+        game_over_sound.play()
 
         while True:
 
@@ -302,6 +310,8 @@ while True:
         if distance < apple_radius and time.time() - last_hit_time > 0.3:
 
             last_hit_time = time.time()
+
+            slice_sound.play()   # 🔊 Play slice sound
 
             score += 1
 
